@@ -1,151 +1,118 @@
-
-//set Interval Demonstration 
-// var number = 30 
-// //set Array of Questions
-// var triviaQuestions = [A, B, C, D]
-// var triviaAnswers = 
-
-// //  Interval Demonstration
-//     //  Set our number counter to 100.
-//     var number = 100;
-
-//     //  Variable that will hold our interval ID when we execute
-//     //  the "run" function
-//     var intervalId;
-
-//     //  When the stop button gets clicked, run the stop function.
-//     $("#stop").on("click", stop);
-
-//     //  When the resume button gets clicked, execute the run function.
-//     $("#resume").on("click", run);
-
-//     //  The run function sets an interval
-//     //  that runs the decrement function once a second.
-//     //  *****BUG FIX******** 
-//     //  Clearing the intervalId prior to setting our new intervalId will not allow multiple instances.
-//     function run() {
-//       clearInterval(intervalId);
-//       intervalId = setInterval(decrement, 1000);
-//     }
-
-//     //  The decrement function.
-//     function decrement() {
-
-//       //  Decrease number by one.
-//       number--;
-
-//       //  Show the number in the #show-number tag.
-//       $("#show-number").html("<h2>" + number + "</h2>");
-
-
-//       //  Once number hits zero...
-//       if (number === 0) {
-
-//         //  ...run the stop function.
-//         stop();
-
-//         //  Alert the user that time is up.
-//         alert("Time Up!");
-//       }
-//     }
-
-//     //  The stop function
-//     function stop() {
-
-//       //  Clears our intervalId
-//       //  We just pass the name of the interval
-//       //  to the clearInterval function.
-//       clearInterval(intervalId);
-//     }
-
-//     //  Execute the run function.
-//     run();
-
-var correctAnswers = 0;
-var incorrectAnswers = 0;
-var unAnswered = 0;
-//  Interval Demonstration: Set our number counter to 30.
-var intervalCounter = 30;
-//  Variable that will hold our interval ID when we execute run function
-var intervalID;
-var triviaQuestions = [A, B, C, D]
-
-
-// START SCREEN
-
-// CREATE START BUTTON to start game.
-$("#gameStart").html("<button>" + "START" + "</button>");
-   
-// when START button gets clicked, function sets an interval that runs the decrement function once a second.
-// Clear intervalId prior to setting our new intervalId will not allow multiple instances.
-//Show the seconds remaining in #timeRemaining div
-$("button").on("click", run(){
-});
-
-function run {
-    clearInterval(intervalId);
-    intervalId = setInterval(decrement, 1000);
-    function decrement() {
-        number--;
-    $("#timeRemaining").html("<h2>" + number + "</h2>")
+var correctGuesses = 0;
+var incorrectGuesses = 0;
+var unanswered = 0;
+// var currentQuestion = "";
+// var userInput = [];
+var gameInProgress = false;
+var timeRemaining = 30;
+var intervalId;
+var data = [
+    {
+        question: "Who is Alex Trebek?",
+        answer: ["jeopardy", "myself", "I", "you"]
+    },
+    {
+        question: "Who is Targaryen?",
+        answer: ["cat", "queen", "dog", "elephant"]
+    },
+    {
+        question: "Who is Stark?",
+        answer: ["GOT", "dog", "cat", "hat"]
+    },
+    {
+        question: "Who is Snow?",
+        answer: ["GOT", "dog", "cat", "hat"]
     }
+];
+var gameinProgress = false;
+
+// START SCREEN: CREATE BUTTON
+function startGame() {
+    correctGuesses = 0;
+    incorrectGuesses = 0;
+    unanswered = 0;
+    timeRemaining = 30;
+    gameInProgress = true;
+    $("#gameStart").html("<button>" + "START" + "</button>");
+}
+startGame();
+
+//PLAY GAME
+function playGame() {
+    $("#gameStart").on("click", function (event) {
+        console.log(this);
+//delete START button
+        $("#gameStart").empty();
+
+//select random trivia question from array
+selectRandomTriviaQuestion(data);
+//render random trivia question from array
+for (var i = 0; i < data.length; i++) {
+    $("#triviaQuestions").html("<h2>" + data[i].question + "</h2>");
+    var answer = data[i].answer;
+        for (var i = 0; i < answer.length; i++) {
+    $("#possibleChoices").html("<button>" + data[i].answer + "</button>");
+    }
+//render answers from random trivia question  
+}
+});
+}
+playGame();
+
+function selectRandomTriviaQuestion(questions) {
+    var maxNum = questions.length;
+    var randomIndex = Math.floor(Math.random() * Math.floor(maxNum));
+    return questions[randomIndex];   
+}
 
 
-    
+
+
+
+
+
     
         
-             
+//         //setInterval function to run clock down by 1 second
+//         intervalId = setInterval(decrement, 1000);
+//         function decrement() {
+//             timeRemaining--;
+//             console.log(timeRemaining);
+//             //renderTimeRemaining on page from array
+//             $("#timeRemaining").html("<h2>" + "Time Remaining: " + timeRemaining + "</h2>");
+//         }
+//         if (timeRemaining === 0) {
+//             //renderMessage on page
+//             $("#message").html("<h2>" + "Time is up" + "</h2>");
+//             //clearInterval so the clock doesn't keep on running and go into negative seconds
+//             clearInterval(intervalId);
+//             //Display the correct answer
+//             //Wait a few seconds (setTimeOut to 5 seconds) and then show the next question.
+//             //render next random Trivia question WITHOUT any user input after setTimeOut = 5 seconds
+//             //renderTriviaQuestion on page
+//         }
+// });
 
 
 
 
-// Create START BUTTON. On click, loads next page.
-// function resetGame 
-//    1. correct answers = 0;
-//    2. incorrect answers = 0; 
-//    3. setTimeOut for game 
-//    4. setTimeOut for reloading next page
-//    5. setTimeInterval for each questions
-//    6. array of questions
-          
-// PLAY GAME
-// function play game
-// 1. Play game is true
-// Time DIV
-// 1. Decrement Time Remaining from 30 seconds for this question
-//     a. show time remainingin #timeRemaining div
-//     b. player must answer question within allotted time (30 seconds)
-        //setTimeInterval to 30 seconds
-//     c. at timeRemaining === 0, 
-//         1. run stop function to clear intervalId.
-//      function stop() {
-    //       clearInterval(intervalId);
-// replace TQ with new message: "Out of Time"
-//             $("#timeRemaining").text("Out of Time");
-//         2. replace possible choices with correct answer
-//             $("#possibleChoices").text("possibleChoices[index]");
+        //Sunny's notes 
+        // 1. clear the question
+        // 2. append the new question
+        // 1 & 2 should be in an func. call this func again once someone gets the right answer. 
+        // call the function which will check your correct answer
 
-//  question loads WITHOUT any user input
-//         1. When Time Remaining === 0, 
-//  Trivia Question
-// 1. Display Trivia question from array of questions.
+            //render possible answers for Trivia Questions on page via button
+            //If the player selects the correct answer, show a screen congratulating them 
+            //for choosing the right option. After a few seconds, display the next question 
+            //-- do this without user input.
+            //Wait a few seconds (setTimeOut to 5 seconds) and then show the next question.
+            //render next random Trivia question WITHOUT any user input after setTimeOut = 5 seconds
 
+            //if click incorrect answer to trivia question, note incorrect when button 
+            //is clicked and then display the correct answer. Wait a few seconds, 
+            // then show the next question.
+            
+            //endGame
 
-// Possible Choices
-// 1. Click choice will replace trivia question with message AND
-//     a. replace choice with correct answer AND image of correct answer.
-//     b. show possible choices for question
-
-// RELOAD NEXT PAGE
-    // setTimeOut = 5 seconds
-
-    //END GAME
-// // At end of game, screen showing 
-// 1. Time remaining (setTimeOut)
-// 2. Number of correct answers: 
-// 3. Number of incorrect answers
-// 4. Start Over? Button to reset Game
-
-// END game
-1. 
-
+            //On the final screen, show the number of correct answers, incorrect answers, and an option to restart the game (without reloading the page).
