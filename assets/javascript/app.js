@@ -1,29 +1,40 @@
+var IMG_ROOT = "assets/images/";
+var TIME_REMAINING = 30; 
+
 var correctGuesses = 0;
 var incorrectGuesses = 0;
 var unanswered = 0;
 // var currentQuestion = "";
 // var userInput = [];
 var gameInProgress = false;
-var timeRemaining = 30;
 var intervalId;
 var secondsRemaining = 5;
 var timeOutId;
+//if answer to data[0].question is not "baratheon", loser()
+//if answer to data[1].question is not "gameOfThrones", loser()
+//if answer to data[2].question is not "lannister", loser()
+//if answer to data[3].question is not "stark", loser()
+//if answer to data[4].question is not "targaryen", loser()
 var data = [
     {
-        question: "Who is Alex Trebek?",
-        answer: ["jeopardy", "myself", "I", "you"]
+        question: "From what family is a Robert?",
+        answer: ["baratheon", "stark", "targaryen", "lannister"]
     },
     {
-        question: "Who is Targaryen?",
-        answer: ["cat", "queen", "dog", "elephant"]
+        question: "What is the best TV series?",
+        answer: ["gameOfThrones", "Seinfeld", "MASH", "theOffice"]
     },
     {
-        question: "Who is Stark?",
-        answer: ["GOT", "dog", "cat", "hat"]
+        question: "Which family is associated with Tyrion, Cersei, and Jaime?",
+        answer: ["lannister", "baratheon", "targaryen", "stark"]
     },
     {
-        question: "Who is Snow?",
-        answer: ["GOT", "dog", "cat", "hat"]
+        question: "Which family had a member killed by Walder Frey at the Red Wedding?",
+        answer: ["stark", "baratheon", "targaryen", "lannister"]
+    },
+    {
+        question: "Which family is associated with the dragons?",
+        answer: ["targaryen", "baratheon", "stark", "lannister"]
     }
 ];
 var gameinProgress = false;
@@ -33,7 +44,7 @@ function startGame() {
     correctGuesses = 0;
     incorrectGuesses = 0;
     unanswered = 0;
-    timeRemaining = 30;
+    TIME_REMAINING = 30;
     gameInProgress = true;
     $("#gameStart").html("<button>" + "START" + "</button>");
 }
@@ -41,6 +52,7 @@ startGame();
 
 //PLAY GAME
 function playGame() {
+    gameinProgress = true;
     $("#gameStart").on("click", function (event) {
         console.log(this);
 //clear START button
@@ -48,20 +60,18 @@ function playGame() {
 //setInterval function to run clock down by 1 second
  intervalId = setInterval(decrement, 1000);
  function decrement() {
-    timeRemaining--;
-    console.log(timeRemaining);
+    TIME_REMAINING--;
+    console.log(TIME_REMAINING);
 //renderTimeRemaining on page from array
-    $("#timeRemaining").html("<h2>" + "Time Remaining: " + timeRemaining + "</h2>");
-    if (timeRemaining === 0) {
+    $("#timeRemaining").html("<h2>" + "Time Remaining: " + TIME_REMAINING + "</h2>");
+    if (TIME_REMAINING === 0) {
 //renderMessage on page
     $("#message").html("<h2>" + "Time is up" + "</h2>");
 //  clearInterval so the clock doesn't keep on running and go into negative seconds
     clearInterval(intervalId);
     renderCorrectAnswer();
     renderNextQuestion();
- }
- 
-
+ } 
 //show only one question until the player answers it or their time runs out.
 //select random trivia question from array
 selectRandomTriviaQuestion(data);
@@ -71,18 +81,25 @@ for (var i = 0; i < data.length; i++) {
 //render possible answers for Trivia Questions on page via button
 //for each answer in the array, we create a new button to hold the text(answer). A new button will be created with each iteration of the loop.
 
-    data[i].answer.forEach(function () {
-        $("#possibleChoices").html("<button>" + data[i].answer[i] + "</button>");
-});
+//     data[i].answer.forEach(function () {
+//         $("#possibleChoices").html("<button>" + data[i].answer[i] + "</button>");
+// });
     // var answer = data[i].answer;
     // for (var i = 0; i < answer.length; i++) {
     // var answerBtn = $("<button>");
     // $("#possibleChoices").append(answerBtn);
- 
 }
 }
+//if player selects 
+// if (answer === incorrect){
+//     loser();
+// }
+// else  {
+//     winner();
+// }
 });
 }
+
 playGame();
 
 function selectRandomTriviaQuestion(questions) {
@@ -131,6 +148,9 @@ function loser() {
     renderNextQuestion();
 }
 
+function resetGame() {
+    playGame();
+}
 
 //Sunny's notes 
 // 1. clear the question
@@ -148,4 +168,4 @@ function loser() {
 
 
 
-// * On the final screen, show the number of correct answers, incorrect answers, and an option to restart the game (without reloading the page).
+
