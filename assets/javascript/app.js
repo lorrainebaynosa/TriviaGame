@@ -46,7 +46,6 @@ var questions = [
     }
 ];
 // START SCREEN: CREATE BUTTON
-
 function startGame() {
     correctGuesses = 0;
     incorrectGuesses = 0;
@@ -67,7 +66,7 @@ function playGame() {
 //clear START button
         $("#gameStart").empty();
 renderQuestion();
-setButtonValues();
+// setButtonValues();
 //setInterval function to run clock down by 1 second
  intervalId = setInterval(decrement, 1000);
  function decrement() {
@@ -89,21 +88,29 @@ setButtonValues();
 });
 }
 
-function renderQuestion() {
+function renderQuestion(question) {
     for (var i = 0; i < questions.length; i++) {
         var question1 = questions[0].question;
         var question2 = questions[1].question;
         var question3 = questions[2].question;
         var question4 = questions[3].question;
         var question5 = questions[4].question;
+        console.log(question3);
     $("#triviaQuestions").html("<h2>" + question1 + "</h2>")
     }
+    setButtonValues(questions[0].answerChoices);
 }
     
-    function setButtonValues() {
-        for (var i = 0; i < 4; i++) {
-            var buttonValue = $("#" + questions.answerChoices[i]);
-            button.attr("data-value", buttonValue);
+    function setButtonValues(answersArray) {
+        for (var i = 0; i < answersArray.length; i++) {
+            var buttonsQuestion = $("<button>" + answersArray[i] + "</button>");
+            $("#buttons").append(buttonsQuestion);
+            buttonsQuestion.attr({
+            "attribute": "answerChoice",
+            "data-value": answersArray[i]
+        });
+            // var buttonValue = $("#" + questions.answerChoices[i]);
+            // button.attr("data-value", buttonValue);
         }
     }
     
@@ -114,13 +121,14 @@ function renderQuestion() {
     });
 
     // for (var i = 0; i < 4; i++) {
-        // var buttonsQuestion1 = $("<button>" + question1.answerChoices[i] + "<button>");
-        // buttonsQuestion1.attr({
-        //     "attribute": "answerChoice",
-        //     "data-value": question1.answerChoices[i]
-        // });
+        // 
+        
         // $("#buttons").append(buttonsQuestion1);
         // question1.answerChoices + "<button>");
+        //if (data-value ===question1.correctAnswer){
+            // wins++;
+
+        // }
     // }
         ;
         // $("#button1").html("<button>" + questions[0].answerChoices[0] + "</button>");
