@@ -1,7 +1,7 @@
 var IMG_ROOT = "assets/images/";
 var questions = [
     {
-        question: "From what family is a Joffrey?",
+        question: "From what family is King Robert?",
         answerChoices: ["baratheon", "targaryen", "stark", "lannister"],
         correctAnswer: "baratheon"
     },
@@ -106,6 +106,13 @@ function setButtonValues(answerChoices, answer) {
             .attr({
                 "data-value": answerChoices[i]
             })
+            .css({
+                "background-color": "yellow",
+                "font-family": "Comic Sans MS",
+                "width": 200,
+                "height": 40,
+                "font-size": 16
+            })
             .click(function () {
                 var selectedAnswer = $(this).attr("data-value")
                 if (selectedAnswer === answer && questionTimer > 0) {
@@ -186,18 +193,17 @@ function summary() {
     $("#buttons").empty();
     $("#message").empty("");
     $("#gameStart").html("<button>" + "START OVER" + "</button>");
-    playGame();
     }
 
-    
-    
-
+//call resetGame when you figure out summary and getting click to work for start over
 function resetGame() {
     questionIndex = 0;
     clockRunning = false;
     correctGuesses = 0;
     incorrectGuesses = 0;
     gameInProgress = true;
+    gameTimer = GAME_TIME_LIMIT;
+    questionTimer = QUESTION_TIME_LIMIT;
     $("#gameTimer").empty("");
     $("#questionTimer").empty("");
     $("#triviaQuestions").empty("");
@@ -205,5 +211,6 @@ function resetGame() {
     $("#message").empty("");
     $("#correctGuesses").empty("");
     $("#incorrectGuesses").empty("");
-    playGame();
 }
+
+
