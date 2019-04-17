@@ -1,41 +1,25 @@
-// var IMG_ROOT = "assets/images/";
-var GAME_TIME_LIMIT = 175; //seconds
-var QUESTION_TIME_LIMIT = 30; //seconds
-var NEXT_LOAD_TIME = 5;//seconds
-
-var gameTimer = GAME_TIME_LIMIT;
-var questionTimer = QUESTION_TIME_LIMIT;
-var nextLoadTimer = NEXT_LOAD_TIME;
-
-var correctGuesses = 0;
-var incorrectGuesses = 0;
-var unanswered = 0;
-// var currentQuestion = "";
-var gameInProgress = false;
-var intervalId;
-var timeOutId;
+var IMG_ROOT = "assets/images/";
 var questions = [
     {
         question: "From what family is a Joffrey?",
-        answerChoices: ["baratheon", "targaryen", "stark", "lannister"],     
+        answerChoices: ["baratheon", "targaryen", "stark", "lannister"],
         correctAnswer: "baratheon"
     },
 
     {
         question: "What is the best TV series?",
-        answerChoices: ["gameOfThrones","Seinfeld", "MASH", "theOffice"],          
+        answerChoices: ["gameOfThrones", "Seinfeld", "MASH", "theOffice"],
         correctAnswer: "gameOfThrones"
     },
-
-    {   
+    {
         question: "Which family is associated with Tyrion, Cersei, and Jaime?",
-        answerChoices: ["lannister", "baratheon", "targaryen", "stark"],           
+        answerChoices: ["lannister", "baratheon", "targaryen", "stark"],
         correctAnswer: "lannister"
     },
 
-    {   
+    {
         question: "Which family had a member killed by Walder Frey at the Red Wedding?",
-        answerChoices: ["stark","baratheon", "targaryen", "lannister"],
+        answerChoices: ["stark", "baratheon", "targaryen", "lannister"],
         correctAnswer: "stark"
     },
 
@@ -45,179 +29,181 @@ var questions = [
         correctAnswer: "targaryen"
     }
 ];
+var GAME_TIME_LIMIT = 30; //seconds
+var QUESTION_TIME_LIMIT = 10; //seconds
+var NEXT_LOAD_TIME = 2;//seconds
+var TOTAL_QUESTIONS = questions.length;
+
+var gameTimer = GAME_TIME_LIMIT;
+var questionTimer = QUESTION_TIME_LIMIT;
+
+var correctGuesses = 0;
+var incorrectGuesses = 0;
+var gameInProgress = false;
+var intervalId;
+var questionTimerId;
+var nextQuestionId;
+var summaryId;
+var questionIndex = 0; //keeps count of currently displayed question.
+var clockRunning = false;
+
 // START SCREEN: CREATE BUTTON
 function startGame() {
     correctGuesses = 0;
     incorrectGuesses = 0;
-    unanswered = 0;
-    GAME_TIME_LIMIT = 175; 
-    QUESTION_TIME_LIMIT = 30; 
-    NEXT_LOAD_TIME = 5;
     gameInProgress = true;
     $("#gameStart").html("<button>" + "START" + "</button>");
 }
 startGame();
 
-//PLAY GAME
-function playGame() {
-    gameinProgress = true;
-    $("#gameStart").on("click", function (event) {
-        console.log(this);
-//clear START button
-        $("#gameStart").empty();
-renderQuestion();
-// setButtonValues();
-//setInterval function to run clock down by 1 second
- intervalId = setInterval(decrement, 1000);
- function decrement() {
+// for the setInterval
+function decrementGame() {
+    clockRunning = true;
     gameTimer--;
+    renderGameTimer();
+    if (gameTimer <= 0 ) {
+        endGame();
+        $("#message").html("<h2>You ran out of time for the game.</h2>")
+        // clearInterval(intervalId);
+    }
+}
+
+function decrementQuestion() {
+    clockRunning = true;
     questionTimer--;
-    console.log(gameTimer);
-    console.log(questionTimer);
-//render questionTimer on page 
     $("#questionTimer").html("<h2>" + "Time Remaining: " + questionTimer + "</h2>");
     if (questionTimer === 0) {
-//renderMessage on page
-    $("#message").html("<h2>" + "Time is up" + "</h2>");
-//  clearInterval so the clock doesn't keep on running and go into negative seconds
-    clearInterval(intervalId);
-    // renderCorrectAnswer();
-    // renderNextQuestion();  
-} 
-}
-});
+        loser();
+        $("#message").html("<h2>" + "Time is up" + "</h2>");
+        //  clearInterval so the clock doesn't keep on running and go into negative seconds
+        clearInterval(questionTimerId);
+    }
 }
 
-function renderQuestion(question) {
-    for (var i = 0; i < questions.length; i++) {
-        var question1 = questions[0].question;
-        var question2 = questions[1].question;
-        var question3 = questions[2].question;
-        var question4 = questions[3].question;
-        var question5 = questions[4].question;
-        console.log(question3);
-    $("#triviaQuestions").html("<h2>" + question1 + "</h2>")
-    }
-    setButtonValues(questions[0].answerChoices);
-}
-    
-    function setButtonValues(answersArray) {
-        for (var i = 0; i < answersArray.length; i++) {
-            var buttonsQuestion = $("<button>" + answersArray[i] + "</button>");
-            $("#buttons").append(buttonsQuestion);
-            buttonsQuestion.attr({
-            "attribute": "answerChoice",
-            "data-value": answersArray[i]
-        });
-            // var buttonValue = $("#" + questions.answerChoices[i]);
-            // button.attr("data-value", buttonValue);
-        }
-    }
-    
-    $(".buttons").on("click", function () {
-        console.log("button clicked!");
-        var buttonValue = $(this).attr("data-value");
-        console.log(buttonValue);
+function playGame() {
+    gameinProgress = true;
+    $("#gameStart").on("click", function () {
+        $("#gameStart").empty();
+        renderGameTimer();
+        var firstQuestion = questions[questionIndex];
+        $("#questionTimer").html("<h2>" + "Time Remaining: " + questionTimer + "</h2>");
+        renderQuestion(firstQuestion);
+        intervalId = setInterval(decrementGame, 1000);
+        questionTimerId = setInterval(decrementQuestion, 1000)
     });
-
-    // for (var i = 0; i < 4; i++) {
-        // 
-        
-        // $("#buttons").append(buttonsQuestion1);
-        // question1.answerChoices + "<button>");
-        //if (data-value ===question1.correctAnswer){
-            // wins++;
-
-        // }
-    // }
-        ;
-        // $("#button1").html("<button>" + questions[0].answerChoices[0] + "</button>");
-        // $("#button2").html("<button>" + questions[0].answerChoices[1] + "</button>");
-        // $("#button3").html("<button>" + questions[0].answerChoices[2] + "</button>");
-        // $("#button4").html("<button>" + questions[0].answerChoices[3] + "</button>");
-    //     console.log(question1);
-    //     if (questionTimer < 0 && wins++) {
-    //     $("#triviaQuestions").html("<h2>" + question2 + "</h2>");
-    //     //clear fields
-    //     $("#questionTimer").empty();
-    //     $("triviaQuestions").empty();
-    //     $("#buttons").empty();
-    //     }  
-    // }
-
-// function checkWins() {
-//     $(").click(function(){
-//     var result = $("input [name='answer']: checked").val();
-//        if(result.length>0 && result === this.correctAnswer) {
-//         winner();
-//        }
-//         else {
-//             loser();
-//         }
-// });
-// }
-
-//show only one question until the player answers it or their time runs out.
-
-function renderGameTimeLimit() {
-    $("#gameTimer").html("<h2" + gameTimer + "</h2>");
 }
 
 playGame();
 
-function renderCorrectAnswer(){
-//clear question button
+function renderQuestion(questionObject) {
+    $("#triviaQuestions").html("<h2>" + questionObject.question + "</h2>")
+    setButtonValues(questionObject.answerChoices, questionObject.correctAnswer);
+}
+
+function setButtonValues(answerChoices, answer) {
+    for (var i = 0; i < answerChoices.length; i++) {
+        var buttonsQuestion = $("<button>" + answerChoices[i] + "</button>")
+            .attr({
+                "data-value": answerChoices[i]
+            })
+            .click(function () {
+                var selectedAnswer = $(this).attr("data-value")
+                if (selectedAnswer === answer && questionTimer > 0) {
+                    winner(answer);
+                }
+                else {
+                    loser(answer);
+                    $("#message").html("<h2>" + "Sorry. That's the incorrect answer. The correct answer is " + answer + "</h2>");
+                }
+                // clear to stop the timer
+                clearInterval(questionTimerId)
+            });
+        $("#buttons").append(buttonsQuestion);
+    }
+}
+
+//show only one question until the player answers it or their time runs out.
+function nextQuestion() {
+    var nextQuestion = questions[questionIndex];
+    $("#GOT").attr("src", IMG_ROOT + "GOTlogo.png")
+    $("#message").html("")
+    $("#buttons").empty();
     $("#triviaQuestions").empty();
-// Display the correct answer
-
-//Display image for correct answer
-         
-}
-function delayNextLoad() {
-//render next ]Trivia question WITHOUT any user input after setTimeOut = 5 seconds. setTimeout function to run clock down by 1 second
-    timeOutId = setTimeOut(decrement, 1000);
-    function decrement() {
-    nextLoadTimer--;
-    console.log(nextLoadTimer);
-    if (nextLoadTimer === 0) {
-//  clearTimeOut so the clock doesn't keep on running and go into negative seconds
-   clear(timeOutId);
-   playGame();
-    }
-    }
+    renderQuestion(nextQuestion);
+    questionTimer = QUESTION_TIME_LIMIT; //reset timer, this is a global variable used in the decrementQuestion function
+    questionTimerId = setInterval(decrementQuestion, 1000)
 }
 
-            
-function winner() {
-    var gameInProgress = false;
+function winner(answer) {
+    $("#message").html("<h2>" + "Congratulations for selecting " + answer + "!" + "</h2>");
+    $("#GOT").attr("src", IMG_ROOT + answer + ".jpg")
     correctGuesses++;
-    unanswered--;
-//If the player selects the correct answer, show a screen congratulating them for choosing the right option.
-    $("#message").html("<h2>" + "Congratulations for selecting correct answer!" + "</h2>");
-    // renderNextQuestion();
+    questionIndex++;
+
+    if (questionIndex < TOTAL_QUESTIONS) {
+        nextQuestionId = setTimeout(function() {
+            nextQuestion();
+        }, NEXT_LOAD_TIME * 1000)
+    }
+    else {
+        endGame();
+    }
 }
 
-function loser() {
-    var gameInProgress = false;
+function loser(answer) {
+    $("#message").html("<h2>" + "Sorry. The correct answer is " + answer + "</h2>");
+    $("#GOT").attr("src", IMG_ROOT + answer + ".jpg")
     incorrectGuesses++;
-    unanswered++;
-//If the player selects the incorrect answer, show a screen telling them they selected the incorrect answer.
-    $("#message").html("<h2>" + "Sorry. That's the incorrect answer." + "</h2>");
-    renderCorrectAnswer();
-    renderNextQuestion();
+    questionIndex++;
+
+    if (questionIndex < TOTAL_QUESTIONS) {
+        nextQuestionId = setTimeout(function() {
+            nextQuestion();
+        }, NEXT_LOAD_TIME * 1000);
+    }
+    else {
+        endGame();
+    }
 }
 
+function renderGameTimer() {
+    $("#gameTimer").html("<h2>Game time remaining: " + gameTimer + "</h2>");
+}
+      
+function endGame() {
+    clearInterval(questionTimerId);
+    clearInterval(intervalId);
+    summaryId = setTimeout(function() {
+            summary();
+        }, NEXT_LOAD_TIME * 1000);
+}
+
+function summary() {
+    $("#GOT").attr("src", IMG_ROOT + "GOTlogo.png")
+    $("#correctGuesses").html("<h2>" + "You have correctly answered " + correctGuesses + "</h2>");
+    $("#incorrectGuesses").html("<h2>" + "You have incorrectly answered " + incorrectGuesses + "</h2>");
+    $("#triviaQuestions").empty("");
+    $("#buttons").empty();
+    $("#message").empty("");
+    $("#gameStart").html("<button>" + "START OVER" + "</button>");
+    playGame();
+    }
+
+    
+    
 
 function resetGame() {
-    gameInProgress === false;
+    questionIndex = 0;
+    clockRunning = false;
+    correctGuesses = 0;
+    incorrectGuesses = 0;
+    gameInProgress = true;
+    $("#gameTimer").empty("");
+    $("#questionTimer").empty("");
+    $("#triviaQuestions").empty("");
+    $("#buttons").empty("");
+    $("#message").empty("");
+    $("#correctGuesses").empty("");
+    $("#incorrectGuesses").empty("");
+    playGame();
 }
-
-//Sunny's notes 
-// 1. clear the question
-// 2. append the new question
-// 1 & 2 should be in an func. call this func again once someone gets the right answer. 
-// call the function which will check your correct answer
-
-//endGame
-
-//On the final screen, show the number of correct answers, incorrect answers, and an option to restart the game (without reloading the page)
