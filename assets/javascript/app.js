@@ -29,9 +29,10 @@ var questions = [
         correctAnswer: "targaryen"
     }
 ];
-var GAME_TIME_LIMIT = 30; //seconds
-var QUESTION_TIME_LIMIT = 10; //seconds
+var GAME_TIME_LIMIT = 175; //seconds
+var QUESTION_TIME_LIMIT = 30; //seconds
 var NEXT_LOAD_TIME = 2;//seconds
+var RESET_TIME = 10;//seconds
 var TOTAL_QUESTIONS = questions.length;
 
 var gameTimer = GAME_TIME_LIMIT;
@@ -48,23 +49,25 @@ var questionIndex = 0; //keeps count of currently displayed question.
 var clockRunning = false;
 
 // START SCREEN: CREATE BUTTON
-function startGame() {
+function initGame() {
     correctGuesses = 0;
     incorrectGuesses = 0;
-    gameInProgress = true;
-    $("#gameStart").html("<button>" + "START" + "</button>");
+    gameInProgress = false;
+    $("#gameStart").html("<button>" + "START" + "</button>")
+        .click(playGame);
 }
-startGame();
+
+initGame();
 
 // for the setInterval
 function decrementGame() {
     clockRunning = true;
     gameTimer--;
-    renderGameTimer();
+    renderGameTimer(gameTimer);
     if (gameTimer <= 0 ) {
         endGame();
         $("#message").html("<h2>You ran out of time for the game.</h2>")
-        // clearInterval(intervalId);
+        clearInterval(intervalId);
     }
 }
 
@@ -81,19 +84,15 @@ function decrementQuestion() {
 }
 
 function playGame() {
-    gameinProgress = true;
-    $("#gameStart").on("click", function () {
-        $("#gameStart").empty();
-        renderGameTimer();
-        var firstQuestion = questions[questionIndex];
-        $("#questionTimer").html("<h2>" + "Time Remaining: " + questionTimer + "</h2>");
-        renderQuestion(firstQuestion);
-        intervalId = setInterval(decrementGame, 1000);
-        questionTimerId = setInterval(decrementQuestion, 1000)
-    });
+    gameInProgress = true;
+    $("#gameStart").empty();
+    renderGameTimer(gameTimer); 
+    var firstQuestion = questions[questionIndex];
+    $("#questionTimer").html("<h2>" + "Time Remaining: " + questionTimer + "</h2>");
+    renderQuestion(firstQuestion);
+    intervalId = setInterval(decrementGame, 1000);
+    questionTimerId = setInterval(decrementQuestion, 1000);
 }
-
-playGame();
 
 function renderQuestion(questionObject) {
     $("#triviaQuestions").html("<h2>" + questionObject.question + "</h2>")
@@ -141,7 +140,7 @@ function nextQuestion() {
     questionTimerId = setInterval(decrementQuestion, 1000)
 }
 
-function winner(answer) {
+function winner(answer) {``
     $("#message").html("<h2>" + "Congratulations for selecting " + answer + "!" + "</h2>");
     $("#GOT").attr("src", IMG_ROOT + answer + ".jpg")
     correctGuesses++;
@@ -162,7 +161,6 @@ function loser(answer) {
     $("#GOT").attr("src", IMG_ROOT + answer + ".jpg")
     incorrectGuesses++;
     questionIndex++;
-
     if (questionIndex < TOTAL_QUESTIONS) {
         nextQuestionId = setTimeout(function() {
             nextQuestion();
@@ -173,8 +171,8 @@ function loser(answer) {
     }
 }
 
-function renderGameTimer() {
-    $("#gameTimer").html("<h2>Game time remaining: " + gameTimer + "</h2>");
+function renderGameTimer(gameTimeRemaining) {
+    $("#gameTimer").html("<h2>Game time remaining: " + gameTimeRemaining + "</h2>");
 }
       
 function endGame() {
@@ -192,8 +190,12 @@ function summary() {
     $("#triviaQuestions").empty("");
     $("#buttons").empty();
     $("#message").empty("");
-    $("#gameStart").html("<button>" + "START OVER" + "</button>");
-    }
+    $("#gameStartOver").html("<button>" + "START OVER" + "</button>")
+        .click(function() {
+            resetGame();
+            playGame();
+        })
+}
 
 //call resetGame when you figure out summary and getting click to work for start over
 function resetGame() {
@@ -201,7 +203,7 @@ function resetGame() {
     clockRunning = false;
     correctGuesses = 0;
     incorrectGuesses = 0;
-    gameInProgress = true;
+    gameInProgress = false;
     gameTimer = GAME_TIME_LIMIT;
     questionTimer = QUESTION_TIME_LIMIT;
     $("#gameTimer").empty("");
